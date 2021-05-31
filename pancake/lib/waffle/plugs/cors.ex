@@ -1,9 +1,9 @@
 defmodule Waffle.Plugs.Cors do
     import Plug.Conn
-  
+
     def init(_) do
     end
-  
+
     def call(conn, _opts) do
       conn
       |> put_resp_header("Access-Control-Allow-Origin", "*")
@@ -11,7 +11,7 @@ defmodule Waffle.Plugs.Cors do
       |> put_resp_header("Access-Control-Max-Age", "86400")
       |> put_resp_header(
         "Access-Control-Allow-Headers",
-        "Origin, Content-Type, Accept"
+        "Origin, Content-Type, Accept X-Forwarded-For"
       )
     end
 end

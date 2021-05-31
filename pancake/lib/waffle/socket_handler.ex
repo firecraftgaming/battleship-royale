@@ -16,7 +16,7 @@ defmodule Waffle.SocketHandler do
 
     @impl true
     def init(request, _state) do
-      ip = request.headers["x-forwarded-for"]
+      ip = request.headers["X-Forwarded-For"]
 
       state = %__MODULE__{
         ip: ip
@@ -27,7 +27,6 @@ defmodule Waffle.SocketHandler do
 
     @impl true
     def websocket_init(state) do
-      PubSub.subscribe("gene:broadcast")
       {:ok, state}
     end
 
@@ -45,6 +44,9 @@ defmodule Waffle.SocketHandler do
       # second command forces a shutdown in case the client is a jerk and
       # tries to DOS us by holding open connections.
       # frontend expects 4003
+
+      if (state.user != nil) Hamburger.Storage.removePlayer(state.user);
+
       ws_push([{:close, 4003, "killed by server"}, shutdown: :normal], state)
     end
 
@@ -69,8 +71,6 @@ defmodule Waffle.SocketHandler do
     @spec general_impl(Pancake.json(), state) :: call_result
     defp general_impl(message, state) do
       case message do
-        {"gene:broadcast", payload} -> ws_push(prepare_socket_msg(%{operator: "broadcast", payload: payload}), state)
-        {"chat:all", payload} -> ws_push(prepare_socket_msg(%{operator: "chat:new_message", payload: payload}), state)
         _ -> ws_push(nil, state)
       end
     end

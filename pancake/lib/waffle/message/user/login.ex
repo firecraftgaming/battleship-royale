@@ -33,8 +33,7 @@ defmodule Waffle.Message.User.Login do
             displayName: name
         }
 
-        Hamburger.PubSub.subscribe("chat:all");
-        Hamburger.PubSub.subscribe("chat:" <> user.username);
+        Hamburger.Storage.addPlayer(user);
 
         {:reply, %Reply{
             username: user.username
