@@ -45,8 +45,7 @@ defmodule Waffle.SocketHandler do
       # tries to DOS us by holding open connections.
       # frontend expects 4003
 
-      if (state.user != nil) Hamburger.Storage.removePlayer(state.user);
-
+      if (state.user != nil), do: Hamburger.Storage.removePlayer(state.user)
       ws_push([{:close, 4003, "killed by server"}, shutdown: :normal], state)
     end
 
@@ -71,6 +70,7 @@ defmodule Waffle.SocketHandler do
     @spec general_impl(Pancake.json(), state) :: call_result
     defp general_impl(message, state) do
       case message do
+    #   {"chat:all", payload} -> ws_push(prepare_socket_msg(%{operator: "chat:new_message", payload: payload}), state)
         _ -> ws_push(nil, state)
       end
     end
@@ -87,14 +87,9 @@ defmodule Waffle.SocketHandler do
 
     def websocket_handle({:text, command_json}, state) do
       with {:ok, message_map!} <- Jason.decode(command_json),
-           %{"op" => <<not_at>> <> _} when not_at != ?@ <- message_map!,
            {:ok, message = %{errors: nil}} <- validate(message_map!, state) do
         dispatch(message, state)
       else
-        msg = %{"op" => "@" <> _} ->
-          dispatch_mediasoup_message(msg, state)
-          ws_push(nil, state)
-
         {:error, %Jason.DecodeError{}} ->
           ws_push({:close, 4001, "invalid input"}, state)
 
@@ -163,12 +158,6 @@ defmodule Waffle.SocketHandler do
       )
     end
 
-    # we expect three types of errors:
-    # - Changeset errors
-    # - textual errors
-    # - anything else
-    # this common `to_map` function handles them all.
-
     defp to_map(changeset = %Ecto.Changeset{}) do
       Pancake.Utils.Errors.changeset_errors(changeset)
     end
@@ -180,25 +169,6 @@ defmodule Waffle.SocketHandler do
     defp to_map(other) do
       %{message: inspect(other)}
     end
-
-    # defp dispatch_mediasoup_message(msg, %{user: %{id: user_id}}) do
-    #   with {:ok, room_id} <- Beef.Users.tuple_get_current_room_id(user_id),
-    #        [{_, _}] <- Onion.RoomSession.lookup(room_id) do
-    #     voice_server_id = Onion.RoomSession.get(room_id, :voice_server_id)
-
-    #     mediasoup_message =
-    #       msg
-    #       |> Map.put("d", msg["p"] || msg["d"])
-    #       |> put_in(["d", "peerId"], user_id)
-    #       # voice server expects this key
-    #       |> put_in(["uid"], user_id)
-    #       |> put_in(["d", "roomId"], room_id)
-
-    #     Onion.VoiceRabbit.send(voice_server_id, mediasoup_message)
-    #   end
-    # end
-
-    defp dispatch_mediasoup_message(_, _), do: nil
 
     def prepare_socket_msg(data), do: {:text, Jason.encode!(data)}
 
