@@ -44,8 +44,7 @@ defmodule Waffle.SocketHandler do
       # second command forces a shutdown in case the client is a jerk and
       # tries to DOS us by holding open connections.
       # frontend expects 4003
-
-      if (state.user != nil), do: Hamburger.Storage.removePlayer(state.user)
+      if (state.user != nil), do: Hamburger.GameState.removePlayer(state.user.id)
       ws_push([{:close, 4003, "killed by server"}, shutdown: :normal], state)
     end
 
@@ -187,4 +186,9 @@ defmodule Waffle.SocketHandler do
     def websocket_info(message = {<<_::binary-size(4), ?:>> <> _, _}, state), do: general_impl(message, state)
 
     def websocket_info(_, state), do: ws_push(nil, state)
+
+    @impl true
+    def terminate(_reason, _req, state) do
+      if (state.user != nil), do: Hamburger.GameState.removePlayer(state.user.id)
+    end
   end

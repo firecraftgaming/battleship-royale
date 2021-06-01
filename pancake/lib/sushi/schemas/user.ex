@@ -1,10 +1,16 @@
 defmodule Sushi.Schemas.User do
   use Ecto.Schema
 
+  alias Sushi.Schemas.Shot
+  alias Sushi.Schemas.Boat
+
   @type t :: %__MODULE__{
     id: Ecto.UUID.t(),
     username: String.t(),
-    displayName: String.t(),
+
+    target: Ecto.UUID.t(),
+    victim: Ecto.UUID.t(),
+
     boats: list(Boat),
     shots: list(Shot)
   }
@@ -12,13 +18,16 @@ defmodule Sushi.Schemas.User do
   @primary_key {:id, :binary_id, []}
   embedded_schema do
     field(:username, :string)
-    field(:displayName, :string)
-    has_many(:boats, Boat)
-    has_many(:shots, Shot)
+
+    field(:target, :binary_id)
+    field(:victim, :binary_id)
+
+    embeds_many(:boats, Boat)
+    embeds_many(:shots, Shot)
   end
 
   defimpl Jason.Encoder do
-    @fields ~w(id username displayName)a
+    @fields ~w(id username)a
 
     def encode(user, opts) do
       user

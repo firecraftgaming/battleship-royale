@@ -1,11 +1,11 @@
 defmodule Pancake do
     use Application
-    
+
     def start(_type, _args) do
         import Supervisor.Spec, warn: false
-    
+
         children = [
-          {Hamburger.Storage, name: Hamburger.Storage},
+          {Hamburger.GameState, name: Hamburger.GameState},
           {Phoenix.PubSub, name: Hamburger.PubSub},
           Plug.Cowboy.child_spec(
               scheme: :http,
@@ -17,11 +17,11 @@ defmodule Pancake do
               ]
           )
         ]
-    
+
         opts = [strategy: :one_for_one, name: Pancake.Supervisor]
         Supervisor.start_link(children, opts)
     end
-  
+
     defp dispatch do
       [
         {:_,
@@ -32,4 +32,3 @@ defmodule Pancake do
       ]
     end
   end
-  
