@@ -55,16 +55,6 @@ defmodule Sushi.Schemas.Boat do
     boats = get_field(changeset, field)
 
     result = Enum.reduce(boats, %{}, fn (v, acc) -> Map.put(acc, v.length, Map.get(acc, v.length, 0) + 1) end)
-    poses = Enum.reduce(boats, %{}, fn (v, acc) -> Enum.reduce(0..(v.length - 1), acc, fn (n, acc) ->
-      init = v.x + v.y * 10
-      add = case v.rot do
-        "x" -> 1
-        "y" -> 10
-        _ -> 0
-      end
-      Map.put(acc, init + add * n, true)
-    end) end)
-
     valid_amount_boats = case result do
       _ when length(boats) != 5 ->
         true
@@ -74,8 +64,85 @@ defmodule Sushi.Schemas.Boat do
         true
     end
 
+    big_boxes = Enum.reduce(boats, [], fn (v, acc) ->
+      {x, y} = {v.x - 1, v.y - 1}
+
+      {w, h} = case v.rot do
+        "x" ->
+          {2 + v.length, 3}
+        "y" ->
+          {3, 2 + v.length}
+        _ ->
+          {0, 0}
+      end
+
+      box = %{
+        x: x,
+        y: y,
+
+        w: w,
+        h: h
+      }
+
+      [box | acc]
+    end)
+
+    small_boxes = Enum.reduce(boats, [], fn (v, acc) ->
+      {x, y} = {v.x, v.y}
+
+      {w, h} = case v.rot do
+        "x" ->
+          {v.length, 1}
+        "y" ->
+          {1, v.length}
+        _ ->
+          {0, 0}
+      end
+
+      box = %{
+        x: x,
+        y: y,
+
+        w: w,
+        h: h
+      }
+
+      [box | acc]
+    end)
+
+    intersect = Enum.reduce(0..(length(boats) - 2), false, fn (i, acc) ->
+      cond do
+        acc -> acc
+        true ->
+          Enum.reduce((i + 1)..(length(boats) - 1), false, fn (j, acc) ->
+            cond do
+              acc -> acc
+              true ->
+                a = Enum.at(small_boxes, i)
+                b = Enum.at(big_boxes, j)
+
+                ahw = a.x + a.w / 2
+                bhw = b.x + b.w / 2
+
+                ahh = a.y + a.h / 2
+                bhh = b.y + b.h / 2
+
+                w = a.w + b.w
+                h = a.h + b.h
+
+                wa = abs(ahw - bhw) * 2
+                ha = abs(ahh - bhh) * 2
+
+                wa < w and ha < h
+            end
+          end)
+      end
+    end)
+
+
+
     changeset = if_state(valid_amount_boats, add_error(changeset, field, "to many or to few boats or invalid amounts of them", val: boats), changeset)
-    changeset = if_state(map_size(poses) != Enum.reduce(boats, 0, fn (v, acc) -> acc + v.length end), add_error(changeset, field, "boats overlap", val: boats), changeset)
+    changeset = if_state(intersect, add_error(changeset, field, "boats overlap", val: boats), changeset)
 
     changeset
   end
@@ -83,10 +150,22 @@ defmodule Sushi.Schemas.Boat do
   defimpl Jason.Encoder do
     @fields ~w(x y sunk length rot)a
 
-    def encode(user, opts) do
-      user
+    def encode(boat, opts) do
+      boat
       |> Map.take(@fields)
       |> Jason.Encoder.encode(opts)
+    end
+  end
+
+  def pointInsideBoat?(boat, x, y) do
+    init = boat.x + boat.y * 10
+    pos = x + y * 10
+
+    diff = pos - init
+
+    case boat.rot do
+      "x" -> diff < boat.length
+      "y" -> diff / 10 < boat.length and rem(diff, 10) < 1
     end
   end
 end

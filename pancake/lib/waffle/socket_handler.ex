@@ -2,11 +2,11 @@ defmodule Waffle.SocketHandler do
     require Logger
     alias Hamburger.PubSub
 
-    defstruct ip: nil, user: nil
+    defstruct ip: nil, player: nil
 
     @type state :: %__MODULE__{
       ip: String.t(),
-      user: nil | Sushi.Schemas.User.t()
+      player: nil | Sushi.Schemas.Player.t()
     }
 
     @behaviour :cowboy_websocket
@@ -44,7 +44,7 @@ defmodule Waffle.SocketHandler do
       # second command forces a shutdown in case the client is a jerk and
       # tries to DOS us by holding open connections.
       # frontend expects 4003
-      if (state.user != nil), do: Hamburger.GameState.removePlayer(state.user.id)
+      if (state.player != nil), do: Hamburger.Game.removePlayer(state.player.id)
       ws_push([{:close, 4003, "killed by server"}, shutdown: :normal], state)
     end
 
@@ -69,12 +69,11 @@ defmodule Waffle.SocketHandler do
     @spec general_impl(Pancake.json(), state) :: call_result
     defp general_impl(message, state) do
       case message do
-       {"game:start", _} when state.user != nil ->
-          {:ok, player} = Hamburger.GameState.getPlayer(state.user.id)
-          {:ok, target} = Hamburger.GameState.getPlayer(player.target)
+       {"game:start", _} when state.player != nil ->
+          state = %{state | player: Hamburger.Game.getPlayer(state.player.id)}
+          target = Hamburger.Game.getPlayer(state.player.target)
 
-          new_state = %{state | user: player}
-          ws_push(prepare_socket_msg(%{operator: "game:start", payload: %{target: Hamburger.GameState.filterPlayer(target)}}), new_state)
+          ws_push(prepare_socket_msg(%{operator: "game:start", payload: %{target: Sushi.Schemas.Player.filterPlayer(target)}}), state)
         _ -> ws_push(nil, state)
       end
     end
@@ -194,6 +193,6 @@ defmodule Waffle.SocketHandler do
 
     @impl true
     def terminate(_reason, _req, state) do
-      if (state.user != nil), do: Hamburger.GameState.removePlayer(state.user.id)
+      if (state.player != nil), do: Hamburger.Game.removePlayer(state.player.id)
     end
   end

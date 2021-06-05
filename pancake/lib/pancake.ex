@@ -11,7 +11,7 @@ defmodule Pancake do
               scheme: :http,
               plug: Waffle,
               options: [
-                  port: String.to_integer("3000"),
+                  port: String.to_integer("4000"),
                   dispatch: dispatch(),
                   protocol_options: [idle_timeout: :infinity]
               ]

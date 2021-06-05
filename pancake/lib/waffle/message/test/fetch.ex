@@ -24,7 +24,7 @@ defmodule Waffle.Message.Test.Fetch do
 
     def execute(changeset, state) do
       with {:ok, %{}} <- apply_action(changeset, :validate) do
-        players = for player <- Map.values(Hamburger.GameState.getPlayers()), do: Map.from_struct(player)
+        players = for player <- Map.values(Hamburger.Game.getPlayers()), do: Map.from_struct(player)
         {:reply, %{data: players}, state}
       end
     end

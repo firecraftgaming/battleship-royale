@@ -1,8 +1,8 @@
-defmodule Waffle.Message.User.Login do
+defmodule Waffle.Message.Player.Join do
   use Waffle.Message.Call
   import Ecto.Changeset
 
-  alias Sushi.Schemas.User
+  alias Sushi.Schemas.Player
   alias Sushi.Schemas.Boat
 
   @primary_key false
@@ -23,7 +23,7 @@ defmodule Waffle.Message.User.Login do
   defmodule Reply do
       use Waffle.Message.Push
 
-      @derive {Jason.Encoder, only: [:you]}
+      @derive {Jason.Encoder, only: [:id, :username]}
 
       @primary_key {:id, :binary_id, []}
       embedded_schema do
@@ -34,10 +34,10 @@ defmodule Waffle.Message.User.Login do
   def execute(changeset, state) do
     with {:ok, %{name: name, boats: boats}} <- apply_action(changeset, :validate) do
       cond do
-        state.user != nil -> {:error, "Already Logged In"}
-        Hamburger.GameState.started? -> {:error, "Game Already Started"}
+        state.player != nil -> {:error, "Already Logged In"}
+        Hamburger.Game.started? -> {:error, "Game Already Started"}
         true ->
-          user = %User{
+          player = %Player{
             id: Pancake.Utils.Random.big_ascii_id,
             username: name,
 
@@ -47,10 +47,10 @@ defmodule Waffle.Message.User.Login do
             target: nil
           }
 
-          Hamburger.GameState.addPlayer(user)
+          Hamburger.Game.addPlayer(player)
           Hamburger.PubSub.subscribe("game:start")
 
-          {:reply, %Reply{id: user.id, username: user.username}, %{state | user: user}}
+          {:reply, %Reply{id: player.id, username: player.username}, %{state | player: player}}
       end
     end
   end

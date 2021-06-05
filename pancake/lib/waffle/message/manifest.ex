@@ -1,5 +1,5 @@
 defmodule Waffle.Message.Manifest do
-    alias Waffle.Message.User
+    alias Waffle.Message.Player
     alias Waffle.Message.Test
     alias Waffle.Message.Game
 
@@ -7,7 +7,7 @@ defmodule Waffle.Message.Manifest do
     require Operator
 
     @actions %{
-      "user:login" => User.Login,
+      "player:join" => Player.Join,
 
       "test:fetch" => Test.Fetch,
 

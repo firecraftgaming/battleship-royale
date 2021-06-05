@@ -1,4 +1,4 @@
-defmodule Sushi.Schemas.User do
+defmodule Sushi.Schemas.Player do
   use Ecto.Schema
 
   alias Sushi.Schemas.Shot
@@ -27,10 +27,23 @@ defmodule Sushi.Schemas.User do
   defimpl Jason.Encoder do
     @fields ~w(id username)a
 
-    def encode(user, opts) do
-      user
+    def encode(player, opts) do
+      player
       |> Map.take(@fields)
       |> Jason.Encoder.encode(opts)
     end
+  end
+
+  def filterPlayer(player) do
+    boats = Enum.reduce(player.boats, [], fn (v, acc) ->
+      cond do
+        v.sunk ->
+          acc ++ [v]
+        true ->
+          acc
+      end
+    end)
+
+    %{id: player.id, username: player.username, boats: boats, shots: player.shots}
   end
 end
