@@ -1,11 +1,12 @@
 import React from "react";
-import "../styles/global.css";
+import "../src/styles/global.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
+import { WebSocketProvider } from "../src/modules/ws/WebSocketProvider";
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <WebSocketProvider shouldConnect={true}>
         <Head>
             <meta
                 name="viewport"
@@ -21,7 +22,7 @@ function App({ Component, pageProps }: AppProps) {
             }
         </Head>
         <Component {...pageProps} />
-    </>
+    </WebSocketProvider>
   );
 }
 

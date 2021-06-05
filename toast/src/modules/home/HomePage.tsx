@@ -2,15 +2,15 @@ import React from "react";
 import { useRouter } from "next/router";
 import { MainLayout } from "../../layouts/MainLayout";
 import { Loading } from "../../ui/Loading";
-import { isServer } from "../../../lib/isServer";
-import { useUsernameStore } from "../../stores/useUsernameStore";
+import { isServer } from "../../lib/isServer";
+import { UserStoreType, useUserStore } from "../../stores/useUserStore";
 import { Game } from "../game/Game";
 
 export const HomePage: React.FC = () => {
-  const username = useUsernameStore((state: any) => state.username);
-
+  const username = useUserStore((state: UserStoreType) => state.username);
+  const router = useRouter();
+  
   if (!username) {
-    const router = useRouter();
     if (!isServer) router.push('/login');
 
     return (
