@@ -23,37 +23,35 @@ defmodule Waffle.Message.User.Login do
   defmodule Reply do
       use Waffle.Message.Push
 
-      @derive {Jason.Encoder, only: [:id]}
+      @derive {Jason.Encoder, only: [:you]}
 
-      @primary_key false
+      @primary_key {:id, :binary_id, []}
       embedded_schema do
-        field(:id, :binary_id)
+        field(:username, :string)
       end
   end
 
   def execute(changeset, state) do
     with {:ok, %{name: name, boats: boats}} <- apply_action(changeset, :validate) do
-      if (state.user == nil) do
-        user = %User{
-          id: Pancake.Utils.Random.big_ascii_id,
-          username: name,
+      cond do
+        state.user != nil -> {:error, "Already Logged In"}
+        Hamburger.GameState.started? -> {:error, "Game Already Started"}
+        true ->
+          user = %User{
+            id: Pancake.Utils.Random.big_ascii_id,
+            username: name,
 
-          boats: boats,
-          shots: [],
+            boats: boats,
+            shots: [],
 
-          target: nil,
-          victim: nil
-        }
+            target: nil
+          }
 
-        Hamburger.GameState.addPlayer(user)
+          Hamburger.GameState.addPlayer(user)
+          Hamburger.PubSub.subscribe("game:start")
 
-        {:reply, %Reply{
-          id: user.id
-        }, %{state | user: user}}
-      else
-        {:error, "Already Logged In"}
+          {:reply, %Reply{id: user.id, username: user.username}, %{state | user: user}}
       end
-
     end
   end
 end

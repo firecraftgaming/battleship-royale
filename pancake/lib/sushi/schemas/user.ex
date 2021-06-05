@@ -9,7 +9,6 @@ defmodule Sushi.Schemas.User do
     username: String.t(),
 
     target: Ecto.UUID.t(),
-    victim: Ecto.UUID.t(),
 
     boats: list(Boat),
     shots: list(Shot)
@@ -20,7 +19,6 @@ defmodule Sushi.Schemas.User do
     field(:username, :string)
 
     field(:target, :binary_id)
-    field(:victim, :binary_id)
 
     embeds_many(:boats, Boat)
     embeds_many(:shots, Shot)

@@ -69,7 +69,12 @@ defmodule Waffle.SocketHandler do
     @spec general_impl(Pancake.json(), state) :: call_result
     defp general_impl(message, state) do
       case message do
-    #   {"chat:all", payload} -> ws_push(prepare_socket_msg(%{operator: "chat:new_message", payload: payload}), state)
+       {"game:start", _} when state.user != nil ->
+          {:ok, player} = Hamburger.GameState.getPlayer(state.user.id)
+          {:ok, target} = Hamburger.GameState.getPlayer(player.target)
+
+          new_state = %{state | user: player}
+          ws_push(prepare_socket_msg(%{operator: "game:start", payload: %{target: Hamburger.GameState.filterPlayer(target)}}), new_state)
         _ -> ws_push(nil, state)
       end
     end
