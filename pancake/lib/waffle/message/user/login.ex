@@ -1,7 +1,9 @@
 defmodule Waffle.Message.User.Login do
   use Waffle.Message.Call
+  import Ecto.Changeset
 
   alias Sushi.Schemas.User
+  alias Sushi.Schemas.Boat
 
   @primary_key false
   embedded_schema do
@@ -12,9 +14,10 @@ defmodule Waffle.Message.User.Login do
   def changeset(initializer \\ %__MODULE__{}, data) do
     initializer
     |> cast(data, [:name])
-    |> cast_embed(:boats, [required: true])
+    |> cast_embed(:boats)
     |> validate_length(:name, max: 32)
     |> validate_required([:name, :boats])
+    |> Boat.validate_boats(:boats)
   end
 
   defmodule Reply do
@@ -30,24 +33,27 @@ defmodule Waffle.Message.User.Login do
 
   def execute(changeset, state) do
     with {:ok, %{name: name, boats: boats}} <- apply_action(changeset, :validate) do
-      user = %User{
-        id: Pancake.Utils.Random.big_ascii_id,
-        username: name,
+      if (state.user == nil) do
+        user = %User{
+          id: Pancake.Utils.Random.big_ascii_id,
+          username: name,
 
-        boats: [],
-        shots: [],
+          boats: boats,
+          shots: [],
 
-        target: nil,
-        victim: nil
-      }
+          target: nil,
+          victim: nil
+        }
 
-      Hamburger.GameState.addPlayer(user);
+        Hamburger.GameState.addPlayer(user)
 
-      IO.puts(inspect boats)
+        {:reply, %Reply{
+          id: user.id
+        }, %{state | user: user}}
+      else
+        {:error, "Already Logged In"}
+      end
 
-      {:reply, %Reply{
-        id: user.id
-      }, %{state | user: user}}
     end
   end
 end
