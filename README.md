@@ -12,7 +12,7 @@ This is an Battle Royale game but BattleShip
 
 ## Contributions
 
-DogeHouse is open to contributions, but I recommend creating an issue or replying in a comment to let me know what you are working on first that way we don't overwrite each other.
+Battleship Royale is open to contributions, but I recommend creating an issue or replying in a comment to let me know what you are working on first that way we don't overwrite each other.
 
 Please read [CONTRIBUTING.md](https://github.com/firecraftgaming/battleship-royale/blob/main/CONTRIBUTING.md) for details on this project.
 
