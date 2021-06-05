@@ -45,8 +45,8 @@ defmodule Sushi.Schemas.Boat do
     changeset = if_state(length < 2 or length > 5, add_error(changeset, :length, "length is out of bounds 2..5", val: length), changeset)
     changeset = if_state(not (rot == "x" or rot == "y"), add_error(changeset, :rot, "rot is neither of 'x' or 'y'", val: rot), changeset)
 
-    changeset = if_state(rot == "x" and x + length > 9, add_error(changeset, :length, "boat extends to far", val: length + x), changeset)
-    changeset = if_state(rot == "y" and y + length > 9, add_error(changeset, :length, "boat extends to far", val: length + y), changeset)
+    changeset = if_state(rot == "x" and x + length > 10, add_error(changeset, :length, "boat extends to far", val: length + x), changeset)
+    changeset = if_state(rot == "y" and y + length > 10, add_error(changeset, :length, "boat extends to far", val: length + y), changeset)
 
     changeset
   end
@@ -138,8 +138,6 @@ defmodule Sushi.Schemas.Boat do
           end)
       end
     end)
-
-
 
     changeset = if_state(valid_amount_boats, add_error(changeset, field, "to many or to few boats or invalid amounts of them", val: boats), changeset)
     changeset = if_state(intersect, add_error(changeset, field, "boats overlap", val: boats), changeset)
