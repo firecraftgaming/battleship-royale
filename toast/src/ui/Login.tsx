@@ -24,9 +24,9 @@ export const Login: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col p-6 justify-center items-center w-400 rounded-8 bg-primary-800">
+        <div className="flex flex-col p-6 justify-center items-center w-400 rounded-8 sm:bg-primary-800">
             <div className="text-primary-100 font-bold text-3xl w-full">Welcome!</div>
-            <div className="text-primary-100 font-normal text-2xl w-full">Fill a name in the box below to begin chatting</div>
+            <div className="text-primary-100 font-normal text-2xl w-full">Fill your name in the box below to begin battleship royale</div>
             <input 
                 className={`w-full text-2xl mt-6 py-2 px-4 rounded-8 text-primary-100 placeholder-primary-300 focus:outline-none bg-primary-700 ${error ? 'border border-secondary' : ''}`}
                 placeholder="Name"

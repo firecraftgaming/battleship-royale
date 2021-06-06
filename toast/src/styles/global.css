@@ -114,6 +114,10 @@ body,
   background-color: var(--color-primary-900);
   height: 100%;
   width: 100%;
+
+  padding: 0;
+  margin: 0;
+
   display: flex;
 }
 
@@ -128,6 +132,7 @@ html {
 
 #__next {
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 ::-webkit-resizer {
@@ -155,4 +160,47 @@ img.emoji {
 
 button:focus {
   outline: none;
+}
+
+.game-board {
+  width: 70vw;
+  height: 70vw;
+  touch-action: none;
+}
+
+.game-board-width {
+  width: 70vw;
+}
+
+.game-column {
+  width: 7vw;
+  height: 7vw;
+}
+
+.game-column-hit {
+  width: 2vw;
+  height: 2vw;
+
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .game-board {
+    width: 35vw;
+    height: 35vw;
+  }
+  
+  .game-column {
+    width: 3.5vw;
+    height: 3.5vw;
+  }
+  
+  .game-column-hit {
+    width: 1vw;
+    height: 1vw;
+  }
+
+  .game-board-width {
+    width: 35vw;
+  }
 }

@@ -91,7 +91,9 @@ export class Mover {
     public boat: Boat;
     public offset: number;
 
-    public static active: Mover = null;
+    private static active: Mover = null;
+    public static boats: Boat[] = [];
+    public static onMove: () => unknown;
 
     public constructor(boats, x, y) {
         const boat = getBoat(boats, x, y);
@@ -102,12 +104,12 @@ export class Mover {
         this.offset = Math.max(xOffset, yOffset);
     }
 
-    public static onDown(boats, x, y) {
-        if (!getBoat(boats, x, y)) return;
-        this.active = new Mover(boats, x, y);
+    public static onDown(x, y) {
+        if (!getBoat(this.boats, x, y)) return;
+        this.active = new Mover(this.boats, x, y);
     }
 
-    public static onEnter(boats, x, y, done?) {
+    public static onEnter(x, y) {
         if (!this.active) return;
 
         const boat = this.active.boat;
@@ -118,22 +120,47 @@ export class Mover {
 
         let valid = true;
 
-        const xl = boat.rot == 'x' ? x + boat.length : x;
-        const yl = boat.rot == 'y' ? y + boat.length : y;
+        const xl = boat.rot == 'x' ? x + boat.length - 1 : x;
+        const yl = boat.rot == 'y' ? y + boat.length - 1 : y;
 
-        if (xl > 10 || yl > 10) valid = false;
-        if (x < 0 || x < 0) valid = false;
+        if (xl > 9 || yl > 9) valid = false;
+        if (x < 0 || y < 0) valid = false;
 
-        for (let b of boats) {
+        for (let b of this.boats) {
             if (b.x == boat.x && b.y == boat.y) continue;
             if (overlap({...boat, x, y}, b)) valid = false;
         }
 
         if (valid) [boat.x, boat.y] = [x, y];
-        done?.()
+        this.onMove?.();
     }
 
     public static onUp(x, y) {
         this.active = null;
+    }
+
+    public static rotate(x, y) {
+        const boat = getBoat(this.boats, x, y);
+        if (!boat) return;
+
+        let valid = true;
+        
+        const opposite = {
+            x: 'y' as 'x' | 'y',
+            y: 'x' as 'x' | 'y'
+        }
+
+        const xl = boat.rot == 'y' ? boat.x + boat.length - 1 : boat.x;
+        const yl = boat.rot == 'x' ? boat.y + boat.length - 1 : boat.y;
+
+        if (xl > 9 || yl > 9) valid = false
+
+        for (let b of this.boats) {
+            if (b.x == boat.x && b.y == boat.y) continue;
+            if (overlap({...boat, rot: opposite[boat.rot] ?? boat.rot}, b)) valid = false;
+        }
+
+        if (valid) boat.rot = opposite[boat.rot] ?? boat.rot;
+        this.onMove?.();
     }
 }

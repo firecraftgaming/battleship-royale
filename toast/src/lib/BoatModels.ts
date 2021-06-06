@@ -25,3 +25,10 @@ export interface BorderInfo {
     t?: boolean;
     b?: boolean;
 }
+export interface Target {
+    id: string;
+    username: string;
+
+    shots: Shot[];
+    boats: Boat[];
+}
