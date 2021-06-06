@@ -1,7 +1,6 @@
 import EctoEnum
 
 alias Waffle.Message.Player
-alias Waffle.Message.Test
 alias Waffle.Message.Game
 
 defenum(
@@ -9,9 +8,8 @@ defenum(
   [
     # player: 0..1
     {Player.Join, 1},
-    # test  2..2
-    {Test.Fetch, 2},
-    # game  3..3
-    {Game.Start, 3}
+    # game  2..3
+    {Game.Start, 2},
+    {Game.Shoot, 3}
   ]
 )

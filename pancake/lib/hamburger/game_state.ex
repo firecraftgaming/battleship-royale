@@ -9,7 +9,7 @@ defmodule Hamburger.GameState do
 
     @impl true
     def init(:ok) do
-        {:ok, %{started: false, players: %{}, host: nil}}
+        {:ok, %{started: false, players: %{}, host: nil, turn: nil}}
     end
 
     # Client

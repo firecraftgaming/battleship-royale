@@ -15,8 +15,8 @@ defmodule Waffle.Message.Game.Start do
     with {:ok, %{}} <- apply_action(changeset, :validate) do
       cond do
         state.player == nil -> {:error, "Not Logged In"}
-        Hamburger.GameState.get().host != state.player.id -> {:error, "You are not the host"}
         Hamburger.Game.started? -> {:error, "Game already started"}
+        Hamburger.Game.host != state.player.id -> {:error, "You are not the host"}
         true ->
           Hamburger.Game.start()
           {:noreply, state}

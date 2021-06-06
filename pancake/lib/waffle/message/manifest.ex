@@ -1,6 +1,5 @@
 defmodule Waffle.Message.Manifest do
     alias Waffle.Message.Player
-    alias Waffle.Message.Test
     alias Waffle.Message.Game
 
     alias Waffle.Message.Types.Operator
@@ -9,9 +8,8 @@ defmodule Waffle.Message.Manifest do
     @actions %{
       "player:join" => Player.Join,
 
-      "test:fetch" => Test.Fetch,
-
-      "game:start" => Game.Start
+      "game:start" => Game.Start,
+      "game:shoot" => Game.Shoot
     }
 
     # verify that all of the actions are accounted for in the

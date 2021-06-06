@@ -156,14 +156,21 @@ defmodule Sushi.Schemas.Boat do
   end
 
   def pointInsideBoat?(boat, x, y) do
-    init = boat.x + boat.y * 10
-    pos = x + y * 10
-
-    diff = pos - init
-
-    case boat.rot do
-      "x" -> diff < boat.length
-      "y" -> diff / 10 < boat.length and rem(diff, 10) < 1
+    valid = case boat.rot do
+      "x" -> boat.y == y
+      "y" -> boat.x == x
     end
+
+    valid = valid and case boat.rot do
+      "x" -> x >= boat.x
+      "y" -> y >= boat.y
+    end
+
+    valid = valid and case boat.rot do
+      "x" -> x < boat.x + boat.length
+      "y" -> y < boat.y + boat.length
+    end
+
+    valid
   end
 end

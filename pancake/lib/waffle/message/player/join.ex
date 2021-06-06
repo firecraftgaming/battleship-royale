@@ -48,7 +48,9 @@ defmodule Waffle.Message.Player.Join do
           }
 
           Hamburger.Game.addPlayer(player)
-          Hamburger.PubSub.subscribe("game:start")
+
+          Hamburger.PubSub.subscribe("game:kick:" <> player.id)
+          Hamburger.PubSub.subscribe("game:update")
 
           {:reply, %Reply{id: player.id, username: player.username}, %{state | player: player}}
       end
