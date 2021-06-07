@@ -52,14 +52,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ own, shots, onShot, ready,
                 const className = classes.join(' ');
 
                 let innerClasses = '';
-                if (shot) {
-                    innerClasses += 'bg-';
-                    if (shot.hit) {
-                        innerClasses += 'secondary';
-                    } else {
-                        innerClasses += 'primary-100';
-                    }
-                }
+                if (shot && shot.hit) innerClasses = 'bg-secondary';
+                if (shot && !shot.hit) innerClasses = 'bg-primary-100';
 
                 return (
                     <GameColumn

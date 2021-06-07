@@ -48,19 +48,6 @@ p.bold {
   --color-primary-100-translucent: rgba(222, 227, 234, 0.15);
 }
 
-.border-r-hit {
-  border-right-color: var(--color-secondary);
-}
-.border-l-hit {
-  border-left-color: var(--color-secondary);
-}
-.border-t-hit {
-  border-top-color: var(--color-secondary);
-}
-.border-b-hit {
-  border-bottom-color: var(--color-secondary);
-}
-
 h1 {
   font-size: 4rem;
 }
@@ -139,21 +126,6 @@ html {
   background: var(--color-primary-700);
 }
 
-img.emoji {
-  height: 1.2rem;
-  width: 1.2rem;
-  margin: 0 0.05em 0 0.1em;
-  top: -0.1em;
-  vertical-align: middle;
-  display: inline-block;
-  position: relative;
-  -webkit-user-drag: none;
-  -moz-user-drag: none;
-  -o-user-drag: none;
-  user-drag: none;
-  cursor: text;
-}
-
 .h-screen {
   height: calc(100vh - var(--screen-height-reduction));
 }
@@ -161,6 +133,8 @@ img.emoji {
 button:focus {
   outline: none;
 }
+
+
 
 .game-board {
   width: 70vw;
@@ -184,6 +158,23 @@ button:focus {
   pointer-events: none;
 }
 
+.border-r-hit {
+  border-right-color: var(--color-secondary);
+  border-right-width: 2px;
+}
+.border-l-hit {
+  border-left-color: var(--color-secondary);
+  border-left-width: 2px;
+}
+.border-t-hit {
+  border-top-color: var(--color-secondary);
+  border-top-width: 2px;
+}
+.border-b-hit {
+  border-bottom-color: var(--color-secondary);
+  border-bottom-width: 2px;
+}
+
 @media (min-width: 640px) {
   .game-board {
     width: 35vw;
@@ -202,5 +193,18 @@ button:focus {
 
   .game-board-width {
     width: 35vw;
+  }
+
+  .border-r-hit {
+    border-right-width: 4px;
+  }
+  .border-l-hit {
+    border-left-width: 4px;
+  }
+  .border-t-hit {
+    border-top-width: 4px;
+  }
+  .border-b-hit {
+    border-bottom-width: 4px;
   }
 }

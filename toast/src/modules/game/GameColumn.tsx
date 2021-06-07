@@ -32,7 +32,7 @@ const getBorder: ((boat: Boat, x: number, y: number) => string) = (boat, x, y) =
         if (last) border.b = true;
     }
 
-    return Object.keys(border).map(v => `border-${v}-2 sm:border-${v}-4 border-${v}-hit`).join(' ')
+    return Object.keys(border).map(v => `border-${v}-hit`).join(' ')
 }
 
 interface GameColumnProps {
