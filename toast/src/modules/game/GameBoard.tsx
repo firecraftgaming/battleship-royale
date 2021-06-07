@@ -21,16 +21,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ own, shots, onShot, ready,
         }
     }
 
-    const c = []
-    if (!own) {
-        if (!active) {
-            c.push('cursor-pointer');
-        } else {
-            c.push('cursor-default');
-            c.push('hover:bg-primary-800');
-        }
-    }
-
     return (
         <div className="grid grid-cols-10 game-board bg-primary-700 m-5" style={{
             opacity: active ? 1 : 0.4
@@ -39,10 +29,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({ own, shots, onShot, ready,
                 const boat = getBoat(boats, x, y);
                 const shot = shots.find(v => v.x == x && v.y == y);
 
-                const classes = [...c]
+                const classes = []
                 if (own) {
                     if (boat && !ready) classes.push('cursor-move'); else classes.push('cursor-default');
                     if (boat) classes.push('bg-accent');
+                } else {
+                    if (active && !shot) {
+                        classes.push('cursor-pointer');
+                        classes.push('hover:bg-primary-800');
+                    } else {
+                        classes.push('cursor-default');
+                    }
                 }
 
                 const className = classes.join(' ');
