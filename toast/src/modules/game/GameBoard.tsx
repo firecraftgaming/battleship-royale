@@ -41,12 +41,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ own, shots, onShot, ready,
 
                 const classes = [...c]
                 if (own) {
-                    if (boat && !ready) classes.push('cursor-move');
-                    if (boat) {
-                        classes.push('bg-accent');
-                    } else {
-                        classes.push('cursor-default');
-                    }
+                    if (boat && !ready) classes.push('cursor-move'); else classes.push('cursor-default');
+                    if (boat) classes.push('bg-accent');
                 }
 
                 const className = classes.join(' ');
